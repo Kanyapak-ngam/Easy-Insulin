@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Insulin Easy — Patient</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========== STYLE พื้นฐาน (เหมือนเดิม) ========== */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1B6B3A;--green-light:#E8F5EE;--green-mid:#2E7D52;--green-btn:#27A85A;--orange:#E65100;--orange-light:#FFF3E6;--blue:#1565C0;--blue-light:#E3F0FF;--gray-100:#F1F4F2;--gray-200:#DDE6E0;--gray-400:#8A9E92;--gray-600:#4A6356;--gray-800:#2D3D35;--gray-900:#1A2620;--white:#fff;--radius:10px;--radius-sm:8px;--radius-lg:16px;--shadow:0 2px 12px rgba(27,107,58,0.10);}
+body{font-family:'Sarabun',sans-serif;background:#F0F5F2;color:var(--gray-900);min-height:100vh;font-size:16px;line-height:1.6}
+.page{display:none;min-height:100vh}.page.active{display:block}#page-login.active{display:flex}#page-doctor.active{display:block}
+.app-header{background:var(--green);color:#fff;padding:0 16px;display:flex;align-items:center;gap:10px;height:58px;box-shadow:0 2px 8px rgba(0,0,0,0.18);position:sticky;top:0;z-index:100}
+.header-logo{width:42px;height:42px;border-radius:50%;background:#fff;object-fit:cover;flex-shrink:0}
+.header-title{font-size:17px;font-weight:700}.header-sub{font-size:11px;opacity:0.8}.header-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.patient-tag{background:rgba(255,255,255,0.22);border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600;border:1.5px solid rgba(255,255,255,0.5)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--radius-sm);font-family:'Sarabun',sans-serif;cursor:pointer;font-weight:700;transition:filter 0.15s,transform 0.1s}
+.btn:active{transform:scale(0.97)}.btn:hover{filter:brightness(0.9)}
+.btn-green{background:#27A85A;color:#fff;box-shadow:0 4px 12px rgba(39,168,90,0.45)}
+.btn-orange{background:#E65100;color:#fff;box-shadow:0 4px 10px rgba(230,81,0,0.40)}
+.btn-blue{background:#1565C0;color:#fff;box-shadow:0 4px 10px rgba(21,101,192,0.38)}
+.btn-red{background:#C62828;color:#fff;box-shadow:0 3px 8px rgba(198,40,40,0.35)}
+.btn-ghost{background:rgba(255,255,255,0.22);border:1.5px solid rgba(255,255,255,0.55);color:#fff}
+.btn-outline{background:#E8F5EE;border:1.5px solid #A5D6B5;color:var(--green)}
+.btn-full{width:100%;padding:13px}.btn-md{padding:10px 20px;font-size:15px}.btn-sm{padding:6px 14px;font-size:13px}.btn-xs{padding:4px 12px;font-size:12px}
+#page-login{background:linear-gradient(160deg,#E8F5EE 0%,#FFF3E6 100%);align-items:center;justify-content:center;padding:24px 16px}
+.login-card{background:#fff;border-radius:20px;padding:32px 24px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(27,107,58,0.14)}
+.login-logo{width:120px;height:120px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 15px;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+.login-brand{text-align:center;font-size:22px;font-weight:700;color:var(--green);margin-bottom:2px}
+.login-brand span{color:#E07B20}.login-desc{text-align:center;font-size:13px;color:var(--gray-600);margin-bottom:22px}
+.form-group{margin-bottom:16px}.form-label{font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:6px;display:block}
+.form-input{width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:15px;font-family:'Sarabun',sans-serif;color:var(--gray-900);background:#fff;outline:none;transition:border 0.2s}
+.form-input:focus{border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(27,107,58,0.10)}
+.divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--gray-400);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+#page-main{min-height:100vh;background:#F0F5F2}
+.date-bar{background:var(--green-light);border-bottom:1px solid var(--gray-200);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.date-text{font-size:13px;font-weight:600;color:var(--green)}
+.main-body{padding:14px 14px 100px}
+.section-title{font-size:12px;font-weight:700;color:var(--gray-400);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px;padding-left:2px}
+.meal-card{background:#fff;border-radius:var(--radius-lg);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);border:1.5px solid transparent}
+.meal-card.injected{border-color:#A5D6B5}.meal-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.meal-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.meal-title{font-size:16px;font-weight:700;color:var(--gray-900)}.meal-time{font-size:12px;color:var(--gray-400)}
+.injected-badge{margin-left:auto;background:#E8F5EE;border-radius:20px;padding:2px 10px;font-size:11px;color:var(--green);font-weight:700;display:none}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.input-label{font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.input-unit{font-weight:400;color:var(--gray-400)}
+.meal-input{width:100%;padding:9px 11px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:18px;font-weight:700;font-family:'Sarabun',sans-serif;color:var(--gray-900);text-align:center;outline:none}
+.meal-input:focus{border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(27,107,58,0.08)}
+.meal-input:disabled{background:#F5F5F5;color:#aaa;border-color:#eee}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+.dose-result{background:linear-gradient(135deg,var(--green-btn),var(--green));border-radius:var(--radius-sm);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.dose-label{font-size:13px;color:rgba(255,255,255,0.88);font-weight:500}
+.dose-breakdown{font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px}
+.dose-value{font-size:26px;font-weight:700;color:#fff}
+.dose-unit{font-size:13px;color:rgba(255,255,255,0.75)}
+.dose-result.zero{background:linear-gradient(135deg,#607D8B,#455A64)}
+.meal-btn-row{display:grid;grid-template-columns:1fr;gap:8px}
+.meal-btn-row.has-edit{grid-template-columns:1fr 1fr}
+.config-bar{margin:12px 14px 0;background:var(--blue-light);border-radius:var(--radius-sm);padding:10px 14px;border-left:3px solid var(--blue)}
+.config-bar-title{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px}
+.config-items{display:flex;gap:12px;flex-wrap:wrap}
+.config-item{font-size:12px;color:var(--blue)}
+.notes-card{background:#fff;border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow);margin-top:4px}
+.notes-title{font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:10px}
+.notes-textarea{width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:14px;font-family:'Sarabun',sans-serif;color:var(--gray-900);resize:none;outline:none;line-height:1.6}
+.notes-textarea:focus{border-color:var(--green-mid)}
+#page-doctor{min-height:100vh;background:#F0F5F2}
+.dconfig-header{background:linear-gradient(135deg,#0D3D1F,#1B6B3A);color:#fff;padding:0 16px;display:flex;align-items:center;gap:10px;height:58px;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.dconfig-body{padding:16px 14px 80px}
+.dconfig-card{background:#fff;border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.dconfig-title{font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.dconfig-row{margin-bottom:14px}
+.dconfig-label{font-size:12px;font-weight:700;color:var(--gray-600);margin-bottom:5px;display:block}
+.dconfig-input{width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:16px;font-weight:700;font-family:'Sarabun',sans-serif;color:var(--gray-900);outline:none}
+.dconfig-input:focus{border-color:var(--green-mid)}
+.calc-box{background:var(--green-light);border-radius:var(--radius-sm);padding:12px 14px;margin-top:12px}
+.calc-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.calc-row:last-child{margin-bottom:0}
+.calc-key{font-size:12px;color:var(--green-mid);font-weight:600}
+.calc-formula{font-size:10px;color:var(--gray-400)}
+.calc-val{font-size:20px;font-weight:700;color:var(--green)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A2620;color:#fff;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:500;opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1.5px solid rgba(255,255,255,0.45);border-radius:20px;padding:4px 12px;font-size:13px;color:#fff;cursor:pointer;font-family:'Sarabun',sans-serif;font-weight:600}
+.notes-history-table{background:#fff;border-radius:var(--radius-lg);padding:16px;margin-top:14px;box-shadow:var(--shadow)}
+.notes-history-title{font-size:14px;font-weight:700;margin-bottom:12px}
+.history-log{max-height:200px;overflow-y:auto}
+.history-item{padding:8px 0;border-bottom:1px solid var(--gray-100);font-size:12px}
+.history-time{color:var(--green);font-weight:600}
+
+/* ========== BASAL STYLE (สีเขียว) ========== */
+.basal-dose-display {
+  background: linear-gradient(135deg, #83a1f9, #1b406b); /* สีฟ้า */
+  border-radius: 20px;
+  padding: 18px 12px;
+  margin: 12px 0;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 6px 14px rgba(27,107,58,0.3);
+  border: 2px solid #A5D6B5;
+}
+.basal-dose-display strong {
+  font-size: 28px;
+  background: rgba(0,0,0,0.15);
+  padding: 4px 12px;
+  border-radius: 40px;
+  display: inline-block;
+  margin-left: 8px;
+}
+/* ปุ่ม Basal ขนาดใหญ่ แต่ใช้สีเขียว */
+.btn-basal-green {
+  background: #27A85A;
+  color: #fff;
+  padding: 16px 20px;
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: 60px;
+  width: 100%;
+  box-shadow: 0 6px 12px rgba(39,168,90,0.4);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Sarabun', sans-serif;
+}
+.btn-basal-blue:active { transform: scale(0.96); }
+.btn-basal-green:hover { filter: brightness(1.05); background: #2E9D5A; }
+/* การ์ดก่อนนอนขอบเขียว */
+#card-bedtime {
+  border: 2px solid #A5D6B5;
+  background: #F8FFF9;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div class="page active" id="page-login">
+  <div class="login-card">
+    <img class="login-logo" src="logo.png" alt="Insulin Easy">
+    <div class="login-brand">Insulin <span>Easy</span></div>
+    <div class="login-desc">ระบบบันทึกและคำนวณอินซูลิน</div>
+    <div id="firebase-status" style="text-align:center;font-size:11px;color:#8A9E92;margin-top:6px;margin-bottom:14px;padding:4px 10px;background:#F0F5F2;border-radius:20px">⏳ กำลังเชื่อมต่อ Firebase...</div>
+    <div class="form-group"><label class="form-label">ชื่อ-นามสกุล</label><input class="form-input" id="inp-name" type="text" placeholder="กรอกชื่อ-นามสกุล" autocomplete="off"></div>
+    <div class="form-group"><label class="form-label">Hospital Number (HN)</label><input class="form-input" id="inp-hn" type="text" placeholder="เช่น 12345" autocomplete="off"></div>
+    <button class="btn btn-green btn-full btn-md" onclick="doLogin()">เข้าสู่ระบบ →</button>
+    <!-- <div class="divider">หรือ</div> -->
+    <!-- <button class="btn btn-blue btn-full btn-md" onclick="gotoDoctor()">🩺 หมอตั้งค่า</button> s-->
+    <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--gray-400)">ข้อมูลการคำนวณถูกดึงจากหมอผู้ดูแล</div>
+  </div>
+</div>
+
+<!-- MAIN PATIENT PAGE -->
+<div class="page" id="page-main">
+  <header class="app-header"><img class="header-logo" src="logo.png" alt=""><div><div class="header-title">Insulin <span style="color:#A8E6C0">Easy</span></div><div class="header-sub">Patient App</div></div><div class="header-right"><span class="patient-tag" id="hdr-patient">—</span><button class="btn btn-ghost btn-xs" onclick="doLogout()">ออกจากระบบ</button></div></header>
+  <div class="date-bar"><div class="date-text" id="date-display">—</div><button class="btn btn-blue btn-xs" onclick="gotoDoctor()">🩺 หมอตั้งค่า</button></div>
+  <div class="config-bar"><div class="config-bar-title">⚙️ ค่าคงที่จากแพทย์</div><div class="config-items"><span class="config-item">TDD: <strong id="ci-tdd">—</strong>U</span><span class="config-item">ICR: <strong id="ci-icr">—</strong>g/U</span><span class="config-item">ISF: <strong id="ci-isf">—</strong>mg/dL/U</span><span class="config-item">Target: <strong id="ci-target">120</strong>mg/dL</span></div></div>
+  <div class="main-body">
+    <div class="section-title">บันทึกแยกมื้อ</div>
+    <!-- มื้อเช้า -->
+    <div class="meal-card" id="card-morning"><div class="meal-header"><div class="meal-icon" style="background:#FFF8E1">🌅</div><div><div class="meal-title">มื้อเช้า</div><div class="meal-time">06:00 – 09:00 น.</div></div><span class="injected-badge" id="badge-morning">✓ ฉีดแล้ว</span></div><div class="input-row"><div><div class="input-label">น้ำตาล <span class="input-unit">mg/dL</span></div><input class="meal-input" id="bg-morning" type="number" placeholder="—" oninput="calcDose('morning')"></div><div><div class="input-label">คาร์บ <span class="input-unit">กรัม</span></div><input class="meal-input" id="carb-morning" type="number" placeholder="—" oninput="calcDose('morning')"></div></div><div class="dose-result zero" id="dose-morning"><div><div class="dose-label">💉 Bolus ที่ต้องฉีด</div><div class="dose-breakdown" id="break-morning"> </div></div><div><span class="dose-value" id="dv-morning">—</span> <span class="dose-unit">Unit</span></div></div><div class="meal-btn-row" id="btnrow-morning"><button class="btn btn-green btn-md" onclick="markInjected('morning')">💉 ฉีดแล้ว</button></div></div>
+    <!-- มื้อเที่ยง -->
+    <div class="meal-card" id="card-noon"><div class="meal-header"><div class="meal-icon" style="background:#E8F5EE">☀️</div><div><div class="meal-title">มื้อเที่ยง</div><div class="meal-time">11:00 – 14:00 น.</div></div><span class="injected-badge" id="badge-noon">✓ ฉีดแล้ว</span></div><div class="input-row"><div><div class="input-label">น้ำตาล <span class="input-unit">mg/dL</span></div><input class="meal-input" id="bg-noon" type="number" placeholder="—" oninput="calcDose('noon')"></div><div><div class="input-label">คาร์บ <span class="input-unit">กรัม</span></div><input class="meal-input" id="carb-noon" type="number" placeholder="—" oninput="calcDose('noon')"></div></div><div class="dose-result zero" id="dose-noon"><div><div class="dose-label">💉 Bolus ที่ต้องฉีด</div><div class="dose-breakdown" id="break-noon"> </div></div><div><span class="dose-value" id="dv-noon">—</span> <span class="dose-unit">Unit</span></div></div><div class="meal-btn-row" id="btnrow-noon"><button class="btn btn-green btn-md" onclick="markInjected('noon')">💉 ฉีดแล้ว</button></div></div>
+    <!-- มื้อเย็น -->
+    <div class="meal-card" id="card-evening"><div class="meal-header"><div class="meal-icon" style="background:#EDE7F6">🌆</div><div><div class="meal-title">มื้อเย็น</div><div class="meal-time">17:00 – 20:00 น.</div></div><span class="injected-badge" id="badge-evening">✓ ฉีดแล้ว</span></div><div class="input-row"><div><div class="input-label">น้ำตาล <span class="input-unit">mg/dL</span></div><input class="meal-input" id="bg-evening" type="number" placeholder="—" oninput="calcDose('evening')"></div><div><div class="input-label">คาร์บ <span class="input-unit">กรัม</span></div><input class="meal-input" id="carb-evening" type="number" placeholder="—" oninput="calcDose('evening')"></div></div><div class="dose-result zero" id="dose-evening"><div><div class="dose-label">💉 Bolus ที่ต้องฉีด</div><div class="dose-breakdown" id="break-evening"> </div></div><div><span class="dose-value" id="dv-evening">—</span> <span class="dose-unit">Unit</span></div></div><div class="meal-btn-row" id="btnrow-evening"><button class="btn btn-green btn-md" onclick="markInjected('evening')">💉 ฉีดแล้ว</button></div></div>
+    
+    <!-- ก่อนนอน (Basal) ปรับปรุงให้ใหญ่ขึ้นและสีเขียว -->
+    <div class="meal-card" id="card-bedtime" style="border:2px solid #A5D6B5; background:#F8FFF9;">
+      <div class="meal-header"><div class="meal-icon" style="background:#D9F0E1">🌙</div><div><div class="meal-title">ก่อนนอน (Basal Insulin)</div><div class="meal-time">21:00 – 23:00 น.</div></div><span class="injected-badge" id="badge-bedtime">✓ ฉีดแล้ว</span></div>
+      <div class="basal-dose-display" id="basal-dose-label">💉 ปริมาณ basal ที่ต้องฉีด: <strong>—</strong> U</div>
+      <div class="meal-btn-row" id="btnrow-bedtime">
+        <button class="btn-basal-green" id="btn-basal" onclick="markBasalInjected()">💉 ฉีด basal insulin</button>
+      </div>
+    </div>
+
+    <!-- Notes + History -->
+    <div class="notes-card"><div class="notes-title">📝 อาการผิดปกติ / โน้ตเพิ่มเติม</div><textarea class="notes-textarea" id="patient-notes" rows="3" placeholder="บันทึกอาการผิดปกติ อาหารที่กิน ฯลฯ"></textarea><button class="btn btn-blue btn-full btn-md" style="margin-top:10px" onclick="saveNoteWithTime()">💾 บันทึกโน้ต (พร้อมเวลา)</button></div>
+    <div class="notes-history-table"><div class="notes-history-title">📋 ประวัติการบันทึกโน้ตวันนี้</div><div id="notes-log-list" class="history-log"></div></div>
+  </div>
+</div>
+
+<!-- DOCTOR CONFIG PAGE (password d123) -->
+<div class="page" id="page-doctor">
+  <header class="dconfig-header"><img class="header-logo" src="logo.png" alt=""><div><div class="header-title">🩺 หมอตั้งค่า</div><div class="header-sub">Doctor Configuration</div></div><div class="header-right"><button class="back-btn" onclick="backFromDoctor()">← กลับ</button></div></header>
+  <div class="dconfig-body"><div style="background:#FFF3E6;border-left:3px solid #E65100;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:13px;color:#E65100;font-weight:600">🔒 หน้านี้สำหรับแพทย์เท่านั้น — กรุณากรอกรหัสก่อนแก้ไข (รหัส : d123)</div>
+    <div class="dconfig-card" id="dconfig-pw-card"><div class="dconfig-title">🔑 รหัสผ่านแพทย์</div><div class="dconfig-row"><label class="dconfig-label">รหัสผ่าน</label><input class="dconfig-input" id="dconfig-pw" type="password" placeholder="กรอกรหัสผ่านแพทย์" onkeydown="if(event.key==='Enter')verifyDoctor()"></div><button class="btn btn-orange btn-full btn-md" onclick="verifyDoctor()">ยืนยัน →</button></div>
+    <div id="dconfig-form" style="display:none"><div class="dconfig-card"><div class="dconfig-title">👤 ข้อมูลคนไข้</div><div class="dconfig-row"><label class="dconfig-label">HN</label><input class="dconfig-input" id="dconfig-hn" type="text" readonly style="background:#f5f5f5;color:#888"></div><div class="dconfig-row"><label class="dconfig-label">ชื่อ-นามสกุล</label><input class="dconfig-input" id="dconfig-name" type="text" readonly style="background:#f5f5f5;color:#888"></div><div class="dconfig-row"><label class="dconfig-label">น้ำหนัก (กก.)</label><input class="dconfig-input" id="dconfig-weight" type="number" placeholder="เช่น 65" oninput="calcDConfig()"></div></div>
+      <div class="dconfig-card"><div class="dconfig-title">💊 ขนาดยา</div><div class="dconfig-row"><label class="dconfig-label">Total Daily Dose — TDD (Unit/วัน)</label><input class="dconfig-input" id="dconfig-tdd" type="number" placeholder="เช่น 30" oninput="calcDConfig()"></div><div class="dconfig-row"><label class="dconfig-label">Target Blood Glucose (mg/dL)</label><input class="dconfig-input" id="dconfig-target" type="number" placeholder="120" value="120" oninput="calcDConfig()"></div><div class="calc-box" id="dconfig-calc" style="display:none"><div class="calc-row"><div><div class="calc-key">ICR</div><div class="calc-formula">= 500 ÷ TDD</div></div><div class="calc-val" id="dconfig-icr">—</div></div><div class="calc-row"><div><div class="calc-key">ISF</div><div class="calc-formula">= 1800 ÷ TDD</div></div><div class="calc-val" id="dconfig-isf">—</div></div></div><button class="btn btn-green btn-full btn-md" onclick="saveDConfig()">💾 บันทึกค่าคงที่</button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDBiicMEOSldea4jeKGGvjYfj-L0mjtvb4",
+  authDomain: "insulin-easy.firebaseapp.com",
+  projectId: "insulin-easy",
+  storageBucket: "insulin-easy.firebasestorage.app",
+  messagingSenderId: "91259950790",
+  appId: "1:91259950790:web:3bde120ea1b1d866dba9c7"
+};
+const MEALS = ['morning','noon','evening'];
+const MEAL_THAI = {morning:'เช้า',noon:'เที่ยง',evening:'เย็น'};
+const DOCTOR_PW = 'd123';
+let db = null, currentPatient = null, patientConfig = {};
+function loadScript(src, cb) {
+  const s = document.createElement('script');
+  s.src = src;
+  s.onload = cb;
+  s.onerror = () => showStatus('❌ โหลด Firebase ไม่ได้');
+  document.head.appendChild(s);
+}
+function showStatus(msg) {
+  const el = document.getElementById('firebase-status');
+  if (el) el.textContent = msg;
+}
+loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js', () => {
+  loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js', () => {
+    try {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      db = firebase.firestore();
+      showStatus('✅ Firebase พร้อม');
+    } catch(e) { showStatus('❌ Firebase init: '+e.message); }
+  });
+});
+function showPage(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+function toast(msg,dur=2500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+async function doLogin(){
+  const name=document.getElementById('inp-name').value.trim(), hn=document.getElementById('inp-hn').value.trim();
+  if(!name||!hn){toast('กรุณากรอกชื่อและ HN');return;}
+  if(!db){toast('⏳ รอ Firebase เชื่อมต่อ...');return;}
+  try{
+    let cfg={tdd:30,target:120};
+    const snap=await db.collection('patients').doc(hn).get();
+    if(snap.exists) cfg=snap.data();
+    currentPatient={name,hn};
+    patientConfig={tdd:cfg.tdd||30, icr:Math.round(500/(cfg.tdd||30)), isf:Math.round(1800/(cfg.tdd||30)), target:cfg.target||120};
+    document.getElementById('hdr-patient').textContent=name+' | HN:'+hn;
+    document.getElementById('ci-tdd').textContent=patientConfig.tdd;
+    document.getElementById('ci-icr').textContent=patientConfig.icr;
+    document.getElementById('ci-isf').textContent=patientConfig.isf;
+    document.getElementById('ci-target').textContent=patientConfig.target;
+    document.getElementById('date-display').textContent=new Date().toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    showPage('page-main');
+    await loadDayData();
+    MEALS.forEach(m=>calcDose(m));
+    updateBasalDisplay();
+    await loadBasalStatus();
+    await loadNotesHistory();
+  } catch(e){ toast('❌ '+e.message); }
+}
+function doLogout(){ location.reload(); }
+function calcDose(meal){
+  if(!patientConfig.icr) return;
+  const bg=parseFloat(document.getElementById('bg-'+meal).value)||0, carb=parseFloat(document.getElementById('carb-'+meal).value)||0;
+  const {icr,isf,target}=patientConfig;
+  const mealDose=carb>0?carb/icr:0;
+  const corr=(bg-target)/isf;
+  const total=Math.max(0,mealDose+corr);
+  const rounded=Math.round(total*2)/2;
+  const dvEl=document.getElementById('dv-'+meal);
+  const brEl=document.getElementById('break-'+meal);
+  const dEl=document.getElementById('dose-'+meal);
+  if(bg===0&&carb===0){ dvEl.textContent='—'; brEl.textContent=' '; dEl.className='dose-result zero'; return; }
+  dvEl.textContent=rounded.toFixed(1);
+  brEl.textContent='มื้อ:'+mealDose.toFixed(1)+'U'+(corr!==0?' | แก้ไข:'+(corr>0?'+':'')+corr.toFixed(1)+'U':'');
+  dEl.className='dose-result'+(rounded===0?' zero':'');
+}
+async function markInjected(meal){
+  const bg=document.getElementById('bg-'+meal).value, carb=document.getElementById('carb-'+meal).value, dose=document.getElementById('dv-'+meal).textContent;
+  if(!bg){ toast('กรุณากรอกค่าน้ำตาลก่อน'); return; }
+  const now=new Date(), timeStr=now.toLocaleTimeString('th-TH');
+  const docId=currentPatient.hn+'_'+todayKey();
+  try{
+    const ref=db.collection('records').doc(docId);
+    const snap=await ref.get();
+    const existing=snap.exists?snap.data():{};
+    await ref.set({...existing, hn:currentPatient.hn, name:currentPatient.name, date:todayKey(), [meal]:{bg,carb,dose,time:timeStr,locked:true}});
+    lockMeal(meal,timeStr);
+    toast('✅ บันทึกมื้อ'+MEAL_THAI[meal]+' แล้วเวลา '+timeStr);
+  } catch(e){ toast('❌ บันทึกไม่ได้'); }
+}
+function lockMeal(meal,timeStr){
+  document.getElementById('bg-'+meal).disabled=true; document.getElementById('carb-'+meal).disabled=true;
+  document.getElementById('card-'+meal).classList.add('injected');
+  const badge=document.getElementById('badge-'+meal); badge.style.display='inline-block'; badge.innerHTML=`✓ ฉีดแล้ว ${timeStr}`;
+  const row=document.getElementById('btnrow-'+meal); row.className='meal-btn-row has-edit';
+  row.innerHTML=`<button class="btn btn-orange btn-md" onclick="unlockMeal('${meal}')">✏️ แก้ไข</button><button class="btn btn-green btn-md" style="opacity:0.4;pointer-events:none">💉 ฉีดแล้ว</button>`;
+}
+function unlockMeal(meal){
+  document.getElementById('bg-'+meal).disabled=false; document.getElementById('carb-'+meal).disabled=false;
+  document.getElementById('card-'+meal).classList.remove('injected');
+  document.getElementById('badge-'+meal).style.display='none';
+  const row=document.getElementById('btnrow-'+meal); row.className='meal-btn-row';
+  row.innerHTML=`<button class="btn btn-green btn-md" onclick="markInjected('${meal}')">💉 ฉีดแล้ว</button>`;
+  document.getElementById('dv-'+meal).textContent='—'; document.getElementById('break-'+meal).textContent=' '; document.getElementById('dose-'+meal).className='dose-result zero';
+}
+async function loadDayData(){
+  const docId=currentPatient.hn+'_'+todayKey();
+  try{
+    const snap=await db.collection('records').doc(docId).get();
+    if(!snap.exists) return;
+    const data=snap.data();
+    for(const m of MEALS){
+      if(data[m]){
+        document.getElementById('bg-'+m).value=data[m].bg||'';
+        document.getElementById('carb-'+m).value=data[m].carb||'';
+        calcDose(m);
+        if(data[m].locked) lockMeal(m,data[m].time||'');
+      }
+    }
+    if(data.notesList&&data.notesList.length){ const lastNote=data.notesList[data.notesList.length-1]; document.getElementById('patient-notes').value=lastNote.text; }
+  } catch(e){}
+}
+async function loadBasalStatus(){
+  const docId=currentPatient.hn+'_'+todayKey();
+  try{
+    const snap=await db.collection('records').doc(docId).get();
+    if(snap.exists&&snap.data().bedtime&&snap.data().bedtime.basalInjected){
+      const bt=snap.data().bedtime;
+      document.getElementById('card-bedtime').classList.add('injected');
+      const badge=document.getElementById('badge-bedtime'); badge.style.display='inline-block'; badge.innerHTML=`✓ ฉีดแล้ว ${bt.basalTime}`;
+      const btnRow=document.getElementById('btnrow-bedtime');
+      btnRow.innerHTML=`<div style="background:#E8F5EE;padding:12px;border-radius:var(--radius-lg);text-align:center;color:#1B6B3A;font-weight:700;font-size:18px;">✅ ฉีด basal แล้วเมื่อ ${bt.basalTime}</div>`;
+    }
+  } catch(e){}
+}
+function updateBasalDisplay(){ 
+  const basalDose=Math.round(patientConfig.tdd*0.4*2)/2; 
+  document.getElementById('basal-dose-label').innerHTML=`💉 ปริมาณ basal ที่ต้องฉีด: <strong>${basalDose} U</strong>`; 
+}
+async function markBasalInjected(){
+  const basalDose=Math.round(patientConfig.tdd*0.4*2)/2;
+  const now=new Date(), timeStr=now.toLocaleTimeString('th-TH');
+  const docId=currentPatient.hn+'_'+todayKey();
+  try{
+    const ref=db.collection('records').doc(docId);
+    const snap=await ref.get();
+    const existing=snap.exists?snap.data():{};
+    await ref.set({...existing, hn:currentPatient.hn, name:currentPatient.name, date:todayKey(), bedtime:{basalInjected:true,basalTime:timeStr,dose:basalDose,time:timeStr,locked:true}});
+    document.getElementById('card-bedtime').classList.add('injected');
+    const badge=document.getElementById('badge-bedtime'); badge.style.display='inline-block'; badge.innerHTML=`✓ ฉีดแล้ว ${timeStr}`;
+    const btnRow=document.getElementById('btnrow-bedtime');
+    btnRow.innerHTML=`<div style="background:#E8F5EE;padding:12px;border-radius:var(--radius-lg);text-align:center;color:#1B6B3A;font-weight:700;font-size:18px;">✅ ฉีด basal แล้วเมื่อ ${timeStr}</div>`;
+    toast(`💉 ฉีด basal insulin (${basalDose}U) เวลา ${timeStr}`);
+  } catch(e){ toast('❌ บันทึก basal ไม่ได้'); }
+}
+async function saveNoteWithTime(){
+  const noteText=document.getElementById('patient-notes').value.trim();
+  if(noteText===""){ toast('กรุณากรอกข้อความโน้ต'); return; }
+  const now=new Date(), timeStr=now.toLocaleTimeString('th-TH'), timestamp=now.toISOString();
+  const docId=currentPatient.hn+'_'+todayKey();
+  try{
+    const ref=db.collection('records').doc(docId);
+    const snap=await ref.get();
+    const existing=snap.exists?snap.data():{ hn:currentPatient.hn, name:currentPatient.name, date:todayKey() };
+    let notesList=existing.notesList||[];
+    notesList.push({text:noteText,time:timeStr,timestamp});
+    await ref.set({...existing, hn:currentPatient.hn, name:currentPatient.name, date:todayKey(), notesList},{merge:true});
+    toast(`📝 บันทึกโน้ตแล้ว (${timeStr})`);
+    loadNotesHistory();
+  } catch(e){ toast('❌ บันทึกโน้ตไม่สำเร็จ'); }
+}
+async function loadNotesHistory(){
+  const docId=currentPatient.hn+'_'+todayKey();
+  try{
+    const snap=await db.collection('records').doc(docId).get();
+    if(!snap.exists||!snap.data().notesList){ document.getElementById('notes-log-list').innerHTML='<div class="empty-state" style="padding:12px">ยังไม่มีบันทึกโน้ตวันนี้</div>'; return; }
+    const notesList=snap.data().notesList;
+    let html='';
+    notesList.forEach(n=>{ html+=`<div class="history-item"><span class="history-time">${n.time||'--:--'}</span> - ${n.text}</div>`; });
+    document.getElementById('notes-log-list').innerHTML=html;
+  } catch(e){}
+}
+function gotoDoctor(){ showPage('page-doctor'); }
+function verifyDoctor(){
+  if(document.getElementById('dconfig-pw').value===DOCTOR_PW){
+    document.getElementById('dconfig-pw-card').style.display='none';
+    document.getElementById('dconfig-form').style.display='block';
+    if(currentPatient){
+      document.getElementById('dconfig-hn').value=currentPatient.hn;
+      document.getElementById('dconfig-name').value=currentPatient.name;
+    }
+  } else { toast('❌ รหัสผิด (รหัสคือ d123)'); }
+}
+function calcDConfig(){
+  const tdd=parseFloat(document.getElementById('dconfig-tdd').value)||0;
+  if(tdd>0){
+    document.getElementById('dconfig-calc').style.display='block';
+    document.getElementById('dconfig-icr').textContent=Math.round(500/tdd)+' g/U';
+    document.getElementById('dconfig-isf').textContent=Math.round(1800/tdd)+' mg/dL/U';
+  } else { document.getElementById('dconfig-calc').style.display='none'; }
+}
+async function saveDConfig(){
+  const hn=document.getElementById('dconfig-hn').value||currentPatient?.hn;
+  const tdd=parseFloat(document.getElementById('dconfig-tdd').value);
+  const target=parseFloat(document.getElementById('dconfig-target').value);
+  if(!hn||!tdd){ toast('กรุณากรอก HN และ TDD'); return; }
+  await db.collection('patients').doc(hn).set({hn,tdd,target,icr:Math.round(500/tdd),isf:Math.round(1800/tdd)},{merge:true});
+  toast('✅ บันทึกค่าคงที่สำเร็จ');
+  if(currentPatient&&currentPatient.hn===hn){
+    patientConfig={tdd, icr:Math.round(500/tdd), isf:Math.round(1800/tdd), target};
+    document.getElementById('ci-tdd').textContent=patientConfig.tdd;
+    document.getElementById('ci-icr').textContent=patientConfig.icr;
+    document.getElementById('ci-isf').textContent=patientConfig.isf;
+    document.getElementById('ci-target').textContent=patientConfig.target;
+    updateBasalDisplay();
+    MEALS.forEach(m=>calcDose(m));
+  }
+  backFromDoctor();
+}
+function backFromDoctor(){ if(currentPatient) showPage('page-main'); else showPage('page-login'); }
+</script>
+</body>
+</html>
